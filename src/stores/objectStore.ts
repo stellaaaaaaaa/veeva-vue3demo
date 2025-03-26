@@ -1,16 +1,13 @@
+// src/stores/objectStore.ts
 import { defineStore } from 'pinia'
 import { ObjectAPI } from '@/api/object'
-import type { AppObject,Object, PaginationParams } from '@/types'
+import type { AppObject, PaginationParams} from '@/types'
 
 export const useObjectStore = defineStore('object', {
   state: () => ({
     list: [] as AppObject[],
     current: null as AppObject | null,
-    pagination: {
-      page: 1,
-      pageSize: 10,
-      total: 0
-    },
+    pagination: { page: 1, pageSize: 10, total: 0 },
     searchText: ''
   }),
 
@@ -22,7 +19,6 @@ export const useObjectStore = defineStore('object', {
         pageSize: this.pagination.pageSize,
         search: this.searchText
       }
-
       const { data } = await ObjectAPI.getList(params)
       this.list = data.items
       this.pagination.total = data.total

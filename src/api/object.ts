@@ -1,24 +1,40 @@
-import { api } from '@/api'
-import type { AppObject, PaginationParams } from '@/types'
+import axios from 'axios'
 
-export const ObjectAPI = {
-  // 获取分页列表
-  async getList(params: PaginationParams & { search?: string }) {
-    return api.get<{ items: AppObject[]; total: number }>('/objects', { params })
-  },
+const service = axios.create({
+  baseURL: 'http://localhost:5000', // 后端地址
+  timeout: 5000
+})
 
-  // 创建Object
-  async create(data: Omit<AppObject, 'ID'>) {
-    return api.post('/object', data)
-  },
+export interface ObjectData {
+  ID?: string
+  NAME: string
+  LABEL: string
+  TABLE_NAME: string
+  // 其他字段…
+}
 
-  // 更新Object
-  async update(id: string, data: Partial<AppObject>) {
-    return api.put(`/object/${id}`, data)
-  },
+// 分页查询，参数包含 page 与 size
+export function getObjectList(params: { page: number; size: number }) {
+  return service.get('/objects', { params })
+}
 
-  // 软删除
-  async softDelete(id: string) {
-    return api.delete(`/object/${id}`)
-  }
+export function createObject(data: ObjectData) {
+  // 后端接口要求数据格式为数组形式
+  return service.post('/object', [data])
+}
+
+export function updateObject(id: string, data: ObjectData) {
+  return service.put(`/object/${id}`, [data])
+}
+
+export function deleteObject(id: string) {
+  return service.delete(`/object/${id}`)
+}
+
+export function restoreObject(id: string) {
+  return service.put(`/object/restore/${id}`)
+}
+
+export function permanentDeleteObject(id: string) {
+  return service.delete(`/object/permanent_delete/${id}`)
 }
