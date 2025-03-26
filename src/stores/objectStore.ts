@@ -1,7 +1,7 @@
 // src/stores/objectStore.ts
 import { defineStore } from 'pinia'
 import { ObjectAPI } from '@/api/object'
-import type { AppObject, PaginationParams} from '@/types'
+import type { AppObject, PaginationParams } from '@/types'
 
 export const useObjectStore = defineStore('object', {
   state: () => ({

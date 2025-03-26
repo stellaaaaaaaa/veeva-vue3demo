@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from 'vue'
-import { getObjectFieldList, createObjectField, updateObjectField, deleteObjectField, ObjectFieldData } from '@/api/objectField'
+import { getObjectFieldList, createObjectField, updateObjectField, deleteObjectField, type ObjectFieldData } from '@/api/objectField'
 
 export default defineComponent({
   name: 'ObjectDetail',
@@ -64,7 +64,8 @@ export default defineComponent({
       // 根据传入的 objectId 过滤对应字段数据
       getObjectFieldList({ OBJECT_ID: props.objectId }).then(response => {
         // 如果后端接口不支持过滤，可在前端过滤
-        fields.value = response.data.filter((item: ObjectFieldData) => item.OBJECT_ID === props.objectId)
+        // fields.value = response.data.items.filter((item: ObjectFieldData) => item.OBJECT_ID === props.objectId)
+        fields.value = response.data.items
       })
     }
 

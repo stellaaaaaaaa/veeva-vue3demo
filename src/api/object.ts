@@ -14,7 +14,7 @@ export interface ObjectData {
 }
 
 // 分页查询，参数包含 page 与 size
-export function getObjectList(params: { page: number; size: number }) {
+export function getObjectList(params: { page: number; page_size: number }) {
   return service.get('/objects', { params })
 }
 
