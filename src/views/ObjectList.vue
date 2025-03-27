@@ -1,13 +1,14 @@
 <template>
   <div>
+    <!-- Header 区域 -->
+    <div class="header">
+      <h1>{{ pageTitle }}</h1>
+    </div>
+
     <el-card>
       <div style="margin-bottom: 10px; display: flex; align-items: center;">
-        <el-input
-          v-model="searchQuery"
-          placeholder="PLEASE INPUT OBJECT_NAME TO SEARCH"
-          style="margin-right: 10px; width: 300px;"
-          clearable
-        ></el-input>
+        <el-input v-model="searchQuery" placeholder="PLEASE INPUT OBJECT NAME TO SEARCH"
+          style="margin-right: 10px; width: 300px;" clearable></el-input>
         <el-button type="primary" @click="searchObjects">SEARCH</el-button>
         <el-button @click="resetSearch" style="margin-left: 10px;">RESET</el-button>
         <el-button type="primary" @click="openCreateDialog" style="margin-left: auto;">NEW OBJECT</el-button>
@@ -17,23 +18,21 @@
         <el-table-column prop="ID" label="ID"></el-table-column>
         <el-table-column prop="NAME" label="NAME"></el-table-column>
         <el-table-column prop="LABEL" label="LABEL"></el-table-column>
-        <el-table-column prop="TABLE_NAME" label="TABLE_NAME"></el-table-column>
+        <el-table-column prop="TABLE_NAME" label="TABLE NAME"></el-table-column>
         <el-table-column label="OPTIONS">
-  <template #default="scope">
-    <el-button size="mini" type="primary" @click="editObject(scope.row)">EDIT</el-button>
-    <el-button size="mini" type="danger" @click="deleteObject(scope.row)">DELETE</el-button>
-    <el-button size="mini" @click="openDetailDialog(scope.row)">DETAILS</el-button>
-  </template>
-</el-table-column>
+          <template #default="scope">
+            <el-button size="mini" type="primary" @click="editObject(scope.row)">EDIT</el-button>
+            <el-button size="mini" type="danger" @click="deleteObject(scope.row)">DELETE</el-button>
+            <el-button size="mini" @click="openDetailDialog(scope.row)">DETAILS</el-button>
+          </template>
+        </el-table-column>
       </el-table>
 
       <!-- 分页组件 -->
       <div style="margin-top: 10px; text-align: right;">
-        <el-pagination v-model:current-page="page" v-model:page-size="pageSize" :page-sizes="[10, 20, 50, 100]" :size="size"
-          :disabled="disabled" :background="background" layout="total, sizes, prev, pager, next, jumper" :total="total"
-          @size-change="handleSizeChange" @current-change="handlePageChange" />
-
-
+        <el-pagination v-model:current-page="page" v-model:page-size="pageSize" :page-sizes="[10, 20, 50, 100]"
+          :size="size" :disabled="disabled" :background="background" layout="total, sizes, prev, pager, next, jumper"
+          :total="total" @size-change="handleSizeChange" @current-change="handlePageChange" />
       </div>
     </el-card>
 
@@ -43,29 +42,31 @@
         <el-form-item label="NAME" prop="NAME">
           <el-input v-model="form.NAME"></el-input>
         </el-form-item>
-        <el-form-item label="描述">
+        <el-form-item label="LABEL">
           <el-input v-model="form.LABEL"></el-input>
         </el-form-item>
-        <el-form-item label="数据库表名">
+        <el-form-item label="TABLE NAME">
           <el-input v-model="form.TABLE_NAME"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="validateAndSubmitForm">确定</el-button>
+        <el-button @click="dialogVisible = false">CANCEL</el-button>
+        <el-button type="primary" @click="validateAndSubmitForm">SUBMIT</el-button>
       </template>
     </el-dialog>
 
     <!-- 对象详情抽屉：嵌入 ObjectDetail 组件 -->
-    <el-drawer
-  :title="detailDrawerTitle"
-  v-model="detailDrawerVisible"
-  size="50%"
-  direction="rtl"
-  :with-header="true"
->
-  <object-detail :objectId="currentObjectId || ''"></object-detail>
-</el-drawer>
+    <!-- <el-drawer :title="detailDrawerTitle" v-model="detailDrawerVisible" size="50%" direction="rtl" :with-header="true">
+      <object-detail :objectId="currentObjectId || ''"></object-detail>
+    </el-drawer> -->
+    <el-drawer v-model="detailDrawerVisible" size="50%" direction="rtl" :with-header="true">
+      <template #title>
+        <div class="header">
+          <h1>{{ detailDrawerTitle }}</h1>
+        </div>
+      </template>
+      <object-detail :objectId="currentObjectId || ''"></object-detail>
+    </el-drawer>
   </div>
 </template>
 
@@ -82,7 +83,7 @@ import type { FormInstance } from 'element-plus'
 const formRef = ref<FormInstance | null>(null)
 const rules = {
   NAME: [
-    { required: true, message: 'NAME 不能为空', trigger: 'blur' }
+    { required: true, message: 'Name cannot be empty.', trigger: 'blur' }
   ]
 }
 
@@ -90,6 +91,7 @@ export default defineComponent({
   name: 'ObjectList',
   components: { ObjectDetail },
   setup() {
+    const pageTitle = ref('Object Management Page') // 页面标题
     const detailDrawerTitle = ref('对象详情') // 默认标题
     const objectList = ref<ObjectData[]>([])
     const total = ref(0)
@@ -126,10 +128,10 @@ export default defineComponent({
           .then(response => {
             objectList.value = response.data.items || []
             total.value = response.data.total || 0
-            ElMessage.success('检索成功！') // 检索成功提示
+            ElMessage.success('Search success！') // 检索成功提示
           })
           .catch(() => {
-            ElMessage.error('检索失败，请重试！') // 检索失败提示
+            ElMessage.error('Search failed, please try again!') // 检索失败提示
           })
           .finally(() => {
             loading.value = false // 结束加载
@@ -139,10 +141,10 @@ export default defineComponent({
           .then(response => {
             objectList.value = response.data.items || []
             total.value = response.data.total || 0
-            ElMessage.success('加载所有数据成功！') // 加载成功提示
+            ElMessage.success('All data loaded successfully！') // 加载成功提示
           })
           .catch(() => {
-            ElMessage.error('加载数据失败，请重试！') // 加载失败提示
+            ElMessage.error('Search failed, please try again!') // 加载失败提示
           })
           .finally(() => {
             loading.value = false // 结束加载
@@ -185,13 +187,13 @@ export default defineComponent({
         updateObject(editingId.value, form.value).then(() => {
           dialogVisible.value = false
           fetchObjects()
-          ElMessage.success('对象编辑成功！') // 编辑成功提示
+          ElMessage.success('Object edited successfully!') // 编辑成功提示
         })
       } else {
         createObject(form.value).then(() => {
           dialogVisible.value = false
           fetchObjects()
-          ElMessage.success('对象添加成功！') // 添加成功提示
+          ElMessage.success('Object add successfully!') // 添加成功提示
         })
       }
     }
@@ -201,40 +203,40 @@ export default defineComponent({
         if (valid) {
           submitForm()
         } else {
-          ElMessage.error('请填写必填字段')
+          ElMessage.error('Please fill in the required fields!')
         }
       })
     }
 
     const deleteObjectHandler = (row: ObjectData) => {
       ElMessageBox.confirm(
-        `确定要删除对象 "${row.NAME}" 吗？`,
-        '删除确认',
+        `Confirm delete the object : "${row.NAME}"?`,
+        'Confirm deletion',
         {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+          confirmButtonText: 'CONFIRM',
+          cancelButtonText: 'CANCEL',
           type: 'warning',
         }
       )
         .then(() => {
           deleteObject(row.ID as string).then(() => {
             fetchObjects()
-            ElMessage.success('对象删除成功！') // 删除成功提示
+            ElMessage.success('Object delete successfully!') // 删除成功提示
           })
         })
         .catch(() => {
-          ElMessage.info('已取消删除') // 取消删除提示
+          ElMessage.info('Cancle delete') // 取消删除提示
         })
     }
 
     const openDetailDialog = (row: ObjectData) => {
-  currentObjectId.value = row.ID as string // 设置当前对象 ID
-  detailDrawerVisible.value = true // 打开抽屉
-  detailDrawerTitle.value = 'OBJECT_FIELDS: '+ row.NAME
-  console.log('currentObjectId', currentObjectId.value)
-  console.log('detailDrawerVisible', detailDrawerVisible.value)
-  console.log('detailDrawerTitle', detailDrawerTitle.value)
-}
+      currentObjectId.value = row.ID as string // 设置当前对象 ID
+      detailDrawerVisible.value = true // 打开抽屉
+      detailDrawerTitle.value = 'Object Fields Management Page---OBJECT : ' + row.NAME
+      console.log('currentObjectId', currentObjectId.value)
+      console.log('detailDrawerVisible', detailDrawerVisible.value)
+      console.log('detailDrawerTitle', detailDrawerTitle.value)
+    }
 
     const handlePageChange = (newPage: number) => {
       page.value = newPage
@@ -277,8 +279,24 @@ export default defineComponent({
       formRef,
       rules,
       loading,
-      detailDrawerTitle
+      detailDrawerTitle,
+      pageTitle
     }
   }
 })
 </script>
+<style>
+.header {
+  /* margin-bottom: 20px; */
+  padding: 10px 20px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: black;
+}
+</style>
