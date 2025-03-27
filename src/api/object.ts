@@ -18,6 +18,10 @@ export function getObjectList(params: { page: number; page_size: number }) {
   return service.get('/objects', { params })
 }
 
+export function getObjectListBysearch(params: { page: number; page_size: number; id?: string; name?: string  }) {
+  return service.get('/object/search', { params })
+}
+
 export function createObject(data: ObjectData) {
   // 后端接口要求数据格式为数组形式
   return service.post('/object', [data])
