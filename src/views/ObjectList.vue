@@ -4,13 +4,13 @@
       <div style="margin-bottom: 10px; display: flex; align-items: center;">
         <el-input
           v-model="searchQuery"
-          placeholder="请输入OBJECT_NAME进行检索"
+          placeholder="PLEASE INPUT OBJECT_NAME TO SEARCH"
           style="margin-right: 10px; width: 300px;"
           clearable
         ></el-input>
-        <el-button type="primary" @click="searchObjects">检索</el-button>
-        <el-button @click="resetSearch" style="margin-left: 10px;">重置</el-button>
-        <el-button type="primary" @click="openCreateDialog" style="margin-left: auto;">新增对象</el-button>
+        <el-button type="primary" @click="searchObjects">SEARCH</el-button>
+        <el-button @click="resetSearch" style="margin-left: 10px;">RESET</el-button>
+        <el-button type="primary" @click="openCreateDialog" style="margin-left: auto;">NEW OBJECT</el-button>
       </div>
       <el-table :data="objectList" style="width: 100%" stripe v-loading="loading">
         <!-- 新增 ID 列 -->
@@ -18,11 +18,11 @@
         <el-table-column prop="NAME" label="NAME"></el-table-column>
         <el-table-column prop="LABEL" label="LABEL"></el-table-column>
         <el-table-column prop="TABLE_NAME" label="TABLE_NAME"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="OPTIONS">
   <template #default="scope">
-    <el-button size="mini" type="primary" @click="editObject(scope.row)">编辑</el-button>
-    <el-button size="mini" type="danger" @click="deleteObject(scope.row)">删除</el-button>
-    <el-button size="mini" @click="openDetailDialog(scope.row)">详情</el-button>
+    <el-button size="mini" type="primary" @click="editObject(scope.row)">EDIT</el-button>
+    <el-button size="mini" type="danger" @click="deleteObject(scope.row)">DELETE</el-button>
+    <el-button size="mini" @click="openDetailDialog(scope.row)">DETAILS</el-button>
   </template>
 </el-table-column>
       </el-table>
