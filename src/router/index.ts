@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import ObjectList from '../views/ObjectList.vue'
+import PageList from '../views/PageList.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -7,11 +8,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'ObjectList',
     component: ObjectList
   }
-  // ,{
-  //   path: '/PageList',
-  //   name: 'PageList',
-  //   component: ObjectList,
-  // },
+  ,{
+    path: '/PageList',
+    name: 'PageList',
+    component: PageList,
+  },
   // {
   //   path: '/PageLayout',
   //   name: 'PageLayout',

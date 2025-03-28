@@ -7,7 +7,7 @@
             </el-menu-item>
             <el-menu-item index="2">
                 <i class="el-icon-document"></i>
-                <span>Objects</span>
+                <span>PageList</span>
             </el-menu-item>
             <el-menu-item index="3">
                 <i class="el-icon-setting"></i>
@@ -31,7 +31,7 @@ export default defineComponent({
             if (index === '1') {
                 router.push('/')
             } else if (index === '2') {
-                router.push('/objects')
+                router.push('/PageList')
             } else if (index === '3') {
                 router.push('/about')
             }
