@@ -2,12 +2,8 @@
   <div>
     <!-- 检索框和按钮 -->
     <div style="margin-bottom: 10px; display: flex; align-items: center;">
-      <el-input
-        v-model="searchQuery"
-        placeholder="Please input field name to search"
-        style="margin-right: 10px; width: 300px;"
-        clearable
-      ></el-input>
+      <el-input v-model="searchQuery" placeholder="Please input field name to search"
+        style="margin-right: 10px; width: 300px;" clearable></el-input>
       <el-button type="primary" @click="searchFields">Search</el-button>
       <el-button @click="resetSearch" style="margin-left: 10px;">Reset</el-button>
       <div style="margin-left: auto">
@@ -21,7 +17,7 @@
       <el-table-column prop="PAGE_LIST_ID" label="Page List ID"></el-table-column>
       <el-table-column prop="NAME" label="Field Name"></el-table-column>
       <el-table-column prop="TYPE" label="Type"></el-table-column>
-      <el-table-column prop="HIDDEN" label="Hidden"></el-table-column>
+      <el-table-column prop="HIDDEN" label="Hidden" :formatter="hiddenFormatter"></el-table-column>
       <el-table-column label="Options">
         <template #default="scope">
           <el-button size="mini" type="primary" @click="editField(scope.row)">Edit</el-button>
@@ -32,23 +28,14 @@
 
     <!-- 分页组件 -->
     <div style="margin-top: 10px; text-align: right;">
-      <el-pagination
-        v-model:current-page="page"
-        v-model:page-size="pageSize"
-        :page-sizes="[10, 20, 50, 100]"
-        :size="size"
-        :disabled="disabled"
-        :background="background"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handlePageChange"
-      />
+      <el-pagination v-model:current-page="page" v-model:page-size="pageSize" :page-sizes="[10, 20, 50, 100]"
+        :size="size" :disabled="disabled" :background="background" layout="total, sizes, prev, pager, next, jumper"
+        :total="total" @size-change="handleSizeChange" @current-change="handlePageChange" />
     </div>
 
     <!-- 新增/编辑字段弹窗 -->
     <el-dialog :title="dialogTitle" v-model="dialogVisible">
-      <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
+      <el-form :model="form" :rules="rules" ref="formRef" label-width="150px">
         <el-form-item label="Field ID" v-if="editingId">
           <el-input v-model="form.ID" disabled></el-input>
         </el-form-item>
@@ -56,13 +43,8 @@
           <el-input v-model="form.PAGE_LIST_ID" disabled></el-input>
         </el-form-item>
         <el-form-item label="Object Field" prop="OBJECT_FIELD_ID">
-          <el-select v-model="form.OBJECT_FIELD_ID" placeholder="Select Object Field" @change="onObjectFieldChange">
-            <el-option
-              v-for="field in objectFields"
-              :key="field.ID"
-              :label="field.NAME"
-              :value="field.ID"
-            ></el-option>
+          <el-select v-model="form.OBJECT_FIELD_ID" placeholder="Select Object Field Id" @change="onObjectFieldChange">
+            <el-option v-for="field in objectFields" :key="field.ID" :label="field.ID" :value="field.ID"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="Field Name">
@@ -95,7 +77,7 @@ import {
   updatePageListField,
   deletePageListField,
 } from '@/api/PageListField'
-import { getObjectFieldList } from '@/api/objectField'
+import { getObjectFieldList, getAllObjectFieldList } from '@/api/objectField'
 import type { PageListFieldData } from '@/api/PageListField'
 import type { ObjectFieldData } from '@/api/objectField'
 import type { ComponentSize, FormInstance } from 'element-plus'
@@ -111,7 +93,7 @@ export default defineComponent({
   },
   setup(props) {
     const fields = ref<PageListFieldData[]>([])
-    const objectFields = ref<ObjectFieldData[]>([]) // 用于存储 ObjectField 下拉选项
+    const objectFields = ref<ObjectFieldData[]>([]) // 用于存储所有 ObjectField 数据
     const total = ref(0)
     const page = ref(1)
     const pageSize = ref(20)
@@ -131,6 +113,9 @@ export default defineComponent({
     const searchQuery = ref('')
     const loading = ref(false)
     const formRef = ref<FormInstance | null>(null)
+    const hiddenFormatter = (row: PageListFieldData) => {
+      return row.HIDDEN === '1' ? '是' : '否'
+    }
 
     const rules = {
       OBJECT_FIELD_ID: [
@@ -150,6 +135,7 @@ export default defineComponent({
         page_size: pageSize.value,
       }
       if (searchQuery.value) {
+        console.log('searchQuery.value', searchQuery.value)
         params.name = searchQuery.value
         searchPageListField(params)
           .then((response) => {
@@ -163,7 +149,7 @@ export default defineComponent({
             loading.value = false
           })
       } else {
-        getPageListFieldList(params)
+        searchPageListField(params)
           .then((response) => {
             fields.value = response.data.items || []
             total.value = response.data.total || 0
@@ -177,11 +163,15 @@ export default defineComponent({
       }
     }
 
-    // 获取 ObjectField 下拉选项
-    const fetchObjectFields = () => {
-      getObjectFieldList().then((response) => {
-        objectFields.value = response.data || []
-      })
+    // 获取所有 ObjectField 数据
+    const fetchAllObjectFields = () => {
+      getAllObjectFieldList()
+        .then((response) => {
+          objectFields.value = response.data.items || []
+        })
+        .catch(() => {
+          ElMessage.error('Failed to load object fields.')
+        })
     }
 
     // 当选择 ObjectField 时自动填充 NAME 和 TYPE
@@ -196,6 +186,7 @@ export default defineComponent({
     // 搜索字段
     const searchFields = () => {
       page.value = 1
+
       fetchFields()
     }
 
@@ -293,10 +284,11 @@ export default defineComponent({
     // 初始化加载
     onMounted(() => {
       fetchFields()
-      fetchObjectFields()
+      fetchAllObjectFields() // 加载所有 ObjectField 数据
     })
 
     return {
+      hiddenFormatter,
       fields,
       objectFields,
       total,
@@ -314,7 +306,7 @@ export default defineComponent({
       formRef,
       rules,
       fetchFields,
-      fetchObjectFields,
+      fetchAllObjectFields,
       onObjectFieldChange,
       openCreateDialog,
       editField,

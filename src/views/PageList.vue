@@ -7,12 +7,8 @@
 
     <el-card>
       <div style="margin-bottom: 10px; display: flex; align-items: center;">
-        <el-input
-          v-model="searchQuery"
-          placeholder="PLEASE INPUT PAGE NAME TO SEARCH"
-          style="margin-right: 10px; width: 300px;"
-          clearable
-        ></el-input>
+        <el-input v-model="searchQuery" placeholder="PLEASE INPUT PAGE NAME TO SEARCH"
+          style="margin-right: 10px; width: 300px;" clearable></el-input>
         <el-button type="primary" @click="searchPages">SEARCH</el-button>
         <el-button @click="resetSearch" style="margin-left: 10px;">RESET</el-button>
         <el-button type="primary" @click="openCreateDialog" style="margin-left: auto;">NEW PAGE</el-button>
@@ -26,37 +22,35 @@
           <template #default="scope">
             <el-button size="mini" type="primary" @click="editPage(scope.row)">EDIT</el-button>
             <el-button size="mini" type="danger" @click="deletePage(scope.row)">DELETE</el-button>
-            <el-button size="mini" @click="openDetailDialog(scope.row)">DETAILS</el-button>
+            <el-button size="mini" @click="openDetailTabs(scope.row)">DETAILS</el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页组件 -->
       <div style="margin-top: 10px; text-align: right;">
-        <el-pagination
-          v-model:current-page="page"
-          v-model:page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-          :size="size"
-          :disabled="disabled"
-          :background="background"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handlePageChange"
-        />
+        <el-pagination v-model:current-page="page" v-model:page-size="pageSize" :page-sizes="[10, 20, 50, 100]"
+          :size="size" :disabled="disabled" :background="background" layout="total, sizes, prev, pager, next, jumper"
+          :total="total" @size-change="handleSizeChange" @current-change="handlePageChange" />
       </div>
     </el-card>
 
-    <!-- 详情抽屉 -->
-    <el-drawer v-model="detailDrawerVisible" size="60%" direction="rtl" :with-header="true">
+    <!-- 动态 Tabs -->
+    <el-dialog v-model="detailTabsVisible" width="80%" :destroy-on-close="true">
       <template #title>
         <div class="header">
-          <h1>{{ detailDrawerTitle }}</h1>
+          <h1>{{ detailTabsTitle }}</h1>
         </div>
       </template>
-      <page-list-field-detail :pageListId="currentPageListId || ''"></page-list-field-detail>
-    </el-drawer>
+      <el-tabs v-model="activeTab" type="card">
+        <el-tab-pane label="Page Fields" name="fields">
+          <page-list-field-detail :pageListId="currentPageListId || ''" />
+        </el-tab-pane>
+        <el-tab-pane label="Page Layout" name="layout">
+          <page-layout :pageListId="currentPageListId || ''" />
+        </el-tab-pane>
+      </el-tabs>
+    </el-dialog>
 
     <!-- 新增/编辑页面弹窗 -->
     <el-dialog :title="dialogTitle" v-model="dialogVisible">
@@ -64,7 +58,7 @@
         <el-form-item label="NAME" prop="NAME">
           <el-input v-model="form.NAME"></el-input>
         </el-form-item>
-        <el-form-item label="LABEL">
+        <el-form-item label="LABEL" prop="LABEL">
           <el-input v-model="form.LABEL"></el-input>
         </el-form-item>
       </el-form>
@@ -86,15 +80,16 @@ import {
   deletePageList,
 } from '@/api/pageList'
 import PageListFieldDetail from '@/components/PageListFieldDetail.vue'
+import PageLayout from '@/components/PageLayout.vue'
 import type { PageListData } from '@/api/pageList'
 import type { ComponentSize, FormInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 export default defineComponent({
   name: 'PageList',
-  components: { PageListFieldDetail },
+  components: { PageListFieldDetail, PageLayout },
   setup() {
-    const pageTitle = ref('Page Management Page') // 页面标题
+    const pageTitle = ref('Page List Management Page') // 页面标题
     const pageList = ref<PageListData[]>([]) // 页面列表数据
     const total = ref(0) // 总条数
     const page = ref(1) // 当前页码
@@ -113,16 +108,18 @@ export default defineComponent({
     const loading = ref(false) // 加载状态
     const formRef = ref<FormInstance | null>(null) // 表单引用
 
-    // 详情抽屉相关
-    const detailDrawerVisible = ref(false) // 控制详情抽屉显示状态
-    const detailDrawerTitle = ref('Page Fields Management') // 详情抽屉标题
+    // 动态 Tabs 相关
+    const detailTabsVisible = ref(false) // 控制 Tabs 弹窗显示状态
+    const detailTabsTitle = ref('Page Details') // Tabs 弹窗标题
+    const activeTab = ref('fields') // 当前激活的 Tab
     const currentPageListId = ref<string | null>(null) // 当前选中的 PageList ID
 
-    // 打开详情抽屉
-    const openDetailDialog = (row: PageListData) => {
+    // 打开详情 Tabs
+    const openDetailTabs = (row: PageListData) => {
       currentPageListId.value = row.ID as string // 设置当前 PageList ID
-      detailDrawerTitle.value = `Page Fields Management - ${row.NAME}` // 设置抽屉标题
-      detailDrawerVisible.value = true // 打开抽屉
+      detailTabsTitle.value = `Page List Details - ${row.NAME}` // 设置 Tabs 标题
+      detailTabsVisible.value = true // 打开 Tabs 弹窗
+      activeTab.value = 'fields' // 默认激活第一个 Tab
     }
 
     // 表单验证规则
@@ -315,10 +312,11 @@ export default defineComponent({
       rules,
       loading,
       pageTitle,
-      openDetailDialog,
-      detailDrawerVisible,
-      detailDrawerTitle,
+      detailTabsVisible,
+      detailTabsTitle,
+      activeTab,
       currentPageListId,
+      openDetailTabs,
     }
   },
 })

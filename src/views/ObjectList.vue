@@ -71,7 +71,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, watch, ref, onMounted } from 'vue'
 import { getObjectListBysearch, getObjectList, createObject, updateObject, deleteObject } from '@/api/object'
 import ObjectDetail from '@/components/ObjectDetail.vue'
 import type { ObjectData } from '@/api/object'
@@ -81,12 +81,12 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance } from 'element-plus'
 
 const formRef = ref<FormInstance | null>(null)
-  const rules = {
+const rules = {
   NAME: [
-    { 
-      required: true, 
-      message: 'Name cannot be empty.', 
-      trigger: 'blur' 
+    {
+      required: true,
+      message: 'Name cannot be empty.',
+      trigger: 'blur'
     },
     {
       validator: (rule: any, value: string, callback: (error?: Error) => void) => {
@@ -221,25 +221,25 @@ export default defineComponent({
     }
 
     const submitForm = () => {
-  // 去除表单字段中的多余空格
-  form.value.NAME = form.value.NAME.trim()
-  form.value.LABEL = form.value.LABEL.trim()
-  form.value.TABLE_NAME = form.value.TABLE_NAME.trim()
+      // 去除表单字段中的多余空格
+      form.value.NAME = form.value.NAME.trim()
+      form.value.LABEL = form.value.LABEL.trim()
+      form.value.TABLE_NAME = form.value.TABLE_NAME.trim()
 
-  if (editingId.value) {
-    updateObject(editingId.value, form.value).then(() => {
-      dialogVisible.value = false
-      fetchObjects()
-      ElMessage.success('Object edited successfully!') // 编辑成功提示
-    })
-  } else {
-    createObject(form.value).then(() => {
-      dialogVisible.value = false
-      fetchObjects()
-      ElMessage.success('Object added successfully!') // 添加成功提示
-    })
-  }
-}
+      if (editingId.value) {
+        updateObject(editingId.value, form.value).then(() => {
+          dialogVisible.value = false
+          fetchObjects()
+          ElMessage.success('Object edited successfully!') // 编辑成功提示
+        })
+      } else {
+        createObject(form.value).then(() => {
+          dialogVisible.value = false
+          fetchObjects()
+          ElMessage.success('Object added successfully!') // 添加成功提示
+        })
+      }
+    }
 
     const validateAndSubmitForm = () => {
       formRef.value?.validate((valid: boolean) => {

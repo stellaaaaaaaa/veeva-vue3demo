@@ -17,6 +17,9 @@ export interface ObjectFieldData {
 export function getObjectFieldList(params?: { OBJECT_ID?: string }) {
   return service.get('/object_fields', { params })
 }
+export function getAllObjectFieldList() {
+  return service.get('/object_fields/all')
+}
 
 export function getObjectFieldListBysearch(params: { name: string; object_id: string; page: number; page_size: number }) {
   return service.get('/object_field/search', { params })
