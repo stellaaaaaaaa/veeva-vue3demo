@@ -42,7 +42,7 @@
         <el-form-item label="Page List ID">
           <el-input v-model="form.PAGE_LIST_ID" disabled></el-input>
         </el-form-item>
-        <el-form-item label="Object Field" prop="OBJECT_FIELD_ID">
+        <el-form-item label="Object Field ID" prop="OBJECT_FIELD_ID">
           <el-select v-model="form.OBJECT_FIELD_ID" placeholder="Select Object Field Id" @change="onObjectFieldChange">
             <el-option v-for="field in objectFields" :key="field.ID" :label="field.ID" :value="field.ID"></el-option>
           </el-select>
@@ -208,7 +208,8 @@ export default defineComponent({
         HIDDEN: '0',
       }
       dialogVisible.value = true
-      formRef.value?.clearValidate()
+      formRef.value?.resetFields() // 重置表单字段
+      formRef.value?.clearValidate() // 清除验证状态
     }
 
     // 打开编辑字段弹窗

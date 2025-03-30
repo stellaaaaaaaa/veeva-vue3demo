@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-left: 20px;">
     <!-- Header 区域 -->
     <div class="header">
       <h1>{{ pageTitle }}</h1>

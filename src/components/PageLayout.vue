@@ -147,7 +147,7 @@ export default defineComponent({
         // 打开抽屉：显示关联的字段
         const openFieldDrawer = (row: PageLayoutData) => {
             currentPageLayoutId.value = row.ID as string
-            fieldDrawerTitle.value = `Field Details - Layout: ${row.NAME}`
+            fieldDrawerTitle.value = `PageLayout Field Details - Layout: ${row.NAME}`
             fieldDrawerVisible.value = true
         }
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-left: 20px;">
     <!-- Header 区域 -->
     <div class="header">
       <h1>{{ pageTitle }}</h1>
@@ -43,7 +43,7 @@
         </div>
       </template>
       <el-tabs v-model="activeTab" type="card">
-        <el-tab-pane label="Page Fields" name="fields">
+        <el-tab-pane label="Page List Fields" name="fields">
           <page-list-field-detail :pageListId="currentPageListId || ''" />
         </el-tab-pane>
         <el-tab-pane label="Page Layout" name="layout">
