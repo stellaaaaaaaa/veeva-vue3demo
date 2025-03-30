@@ -253,7 +253,7 @@ export default defineComponent({
 
     const deleteObjectHandler = (row: ObjectData) => {
       ElMessageBox.confirm(
-        `Confirm delete the object : "${row.NAME}"?`,
+        `Confirm delete the object : "${row.NAME}"?  This will also delete all related records permanently.`,
         'Confirm deletion',
         {
           confirmButtonText: 'CONFIRM',

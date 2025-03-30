@@ -211,7 +211,7 @@ export default defineComponent({
         // 删除布局
         const deleteLayout = (row: PageLayoutData) => {
             ElMessageBox.confirm(
-                `Are you sure you want to delete the layout "${row.NAME}"?`,
+                `Are you sure you want to delete the layout "${row.NAME}"? This will also delete all related records permanently.`,
                 'Delete Confirmation',
                 {
                     confirmButtonText: 'Confirm',

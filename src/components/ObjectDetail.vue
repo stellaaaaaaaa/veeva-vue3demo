@@ -111,88 +111,88 @@ export default defineComponent({
     // const formRef = ref(null)
     const loading = ref(false)
     const rules = {
-  NAME: [
-    { 
-      required: true, 
-      message: 'Field Name cannot be empty.', 
-      trigger: 'blur' 
-    },
-    {
-      validator: (rule: any, value: string, callback: (error?: Error) => void) => {
-        if (!value || value.trim() === '') {
-          callback(new Error('Field Name cannot contain only spaces.'))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur',
-    },
-  ],
-  LABEL: [
-    {
-      validator: (rule: any, value: string, callback: (error?: Error) => void) => {
-        if (!value || value.trim() === '') {
-          callback(new Error('Label cannot contain only spaces.'))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur',
-    },
-  ],
-  TYPE: [
-    {
-      validator: (rule: any, value: string, callback: (error?: Error) => void) => {
-        if (!value || value.trim() === '') {
-          callback(new Error('Type cannot contain only spaces.'))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur',
-    },
-  ],
-}
+      NAME: [
+        {
+          required: true,
+          message: 'Field Name cannot be empty.',
+          trigger: 'blur'
+        },
+        {
+          validator: (rule: any, value: string, callback: (error?: Error) => void) => {
+            if (!value || value.trim() === '') {
+              callback(new Error('Field Name cannot contain only spaces.'))
+            } else {
+              callback()
+            }
+          },
+          trigger: 'blur',
+        },
+      ],
+      LABEL: [
+        {
+          validator: (rule: any, value: string, callback: (error?: Error) => void) => {
+            if (!value || value.trim() === '') {
+              callback(new Error('Label cannot contain only spaces.'))
+            } else {
+              callback()
+            }
+          },
+          trigger: 'blur',
+        },
+      ],
+      TYPE: [
+        {
+          validator: (rule: any, value: string, callback: (error?: Error) => void) => {
+            if (!value || value.trim() === '') {
+              callback(new Error('Type cannot contain only spaces.'))
+            } else {
+              callback()
+            }
+          },
+          trigger: 'blur',
+        },
+      ],
+    }
 
     // Fetch field data
     const fetchFields = () => {
-  fields.value = [] // 清空旧数据
-  loading.value = true // 开始加载
-  const params: any = {
+      fields.value = [] // 清空旧数据
+      loading.value = true // 开始加载
+      const params: any = {
         obj_id: props.objectId,
         page: page.value,
         page_size: pageSize.value,
       }
-  if (searchQuery.value) {
-    params.name = searchQuery.value // 添加检索条件
-    getObjectFieldListBysearch(params)
-      .then((response) => {
-        fields.value = response.data.items || []
-        total.value = response.data.total || 0
-        ElMessage.success('Search success!') // 检索成功提示
-      })
-      .catch(() => {
-        ElMessage.error('Search failed, please try again!') // 检索失败提示
-      })
-      .finally(() => {
-        loading.value = false // 结束加载
-      })
-  } else {
-    
-    getObjectFieldListBysearch(params)
-      .then((response) => {
-        fields.value = response.data.items || []
-        total.value = response.data.total || 0
-        ElMessage.success('All data loaded successfully!') // 加载成功提示
-      })
-      .catch(() => {
-        ElMessage.error('Failed to load data, please try again!') // 加载失败提示
-      })
-      .finally(() => {
-        loading.value = false // 结束加载
-      })
-  }
-}
+      if (searchQuery.value) {
+        params.name = searchQuery.value // 添加检索条件
+        getObjectFieldListBysearch(params)
+          .then((response) => {
+            fields.value = response.data.items || []
+            total.value = response.data.total || 0
+            ElMessage.success('Search success!') // 检索成功提示
+          })
+          .catch(() => {
+            ElMessage.error('Search failed, please try again!') // 检索失败提示
+          })
+          .finally(() => {
+            loading.value = false // 结束加载
+          })
+      } else {
+
+        getObjectFieldListBysearch(params)
+          .then((response) => {
+            fields.value = response.data.items || []
+            total.value = response.data.total || 0
+            ElMessage.success('All data loaded successfully!') // 加载成功提示
+          })
+          .catch(() => {
+            ElMessage.error('Failed to load data, please try again!') // 加载失败提示
+          })
+          .finally(() => {
+            loading.value = false // 结束加载
+          })
+      }
+    }
 
     // Search fields
     const searchFields = () => {
@@ -241,30 +241,30 @@ export default defineComponent({
 
     // Submit form
     const submitForm = () => {
-  // 去除表单字段中的多余空格
-  form.value.NAME = form.value.NAME.trim()
-  form.value.LABEL = form.value.LABEL.trim()
-  form.value.TYPE = form.value.TYPE.trim()
+      // 去除表单字段中的多余空格
+      form.value.NAME = form.value.NAME.trim()
+      form.value.LABEL = form.value.LABEL.trim()
+      form.value.TYPE = form.value.TYPE.trim()
 
-  if (editingId.value) {
-    updateObjectField(editingId.value, form.value).then(() => {
-      dialogVisible.value = false
-      fetchFields()
-      ElMessage.success('Field edited successfully!')
-    })
-  } else {
-    createObjectField(form.value).then(() => {
-      dialogVisible.value = false
-      fetchFields()
-      ElMessage.success('Field added successfully!')
-    })
-  }
-}
+      if (editingId.value) {
+        updateObjectField(editingId.value, form.value).then(() => {
+          dialogVisible.value = false
+          fetchFields()
+          ElMessage.success('Field edited successfully!')
+        })
+      } else {
+        createObjectField(form.value).then(() => {
+          dialogVisible.value = false
+          fetchFields()
+          ElMessage.success('Field added successfully!')
+        })
+      }
+    }
 
     // Delete field
     const deleteField = (row: ObjectFieldData) => {
       ElMessageBox.confirm(
-        `Are you sure you want to delete the field "${row.NAME}"?`,
+        `Are you sure you want to delete the field "${row.NAME}"? This will also delete all related records permanently.`,
         'Delete Confirmation',
         {
           confirmButtonText: 'Confirm',

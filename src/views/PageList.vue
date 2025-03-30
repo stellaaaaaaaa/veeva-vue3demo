@@ -252,7 +252,7 @@ export default defineComponent({
     // 删除页面
     const deletePage = (row: PageListData) => {
       ElMessageBox.confirm(
-        `Confirm delete the page: "${row.NAME}"?`,
+        `Confirm delete the page: "${row.NAME}"? This will also delete all related records permanently.`,
         'Confirm deletion',
         {
           confirmButtonText: 'CONFIRM',
