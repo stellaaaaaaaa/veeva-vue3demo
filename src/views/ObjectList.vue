@@ -130,7 +130,7 @@ export default defineComponent({
   components: { ObjectDetail },
   setup() {
     const pageTitle = ref('Object Management Page') // 页面标题
-    const detailDrawerTitle = ref('对象详情') // 默认标题
+    const detailDrawerTitle = ref('OBJECT DETAIL') // 默认标题
     const objectList = ref<ObjectData[]>([])
     const total = ref(0)
     const page = ref(1)
@@ -139,7 +139,7 @@ export default defineComponent({
     const disabled = ref(false)
     const size = ref<ComponentSize>('default')
     const dialogVisible = ref(false)
-    const dialogTitle = ref('新增对象')
+    const dialogTitle = ref('NEW OBJECT')
     const form = ref<ObjectData>({
       NAME: '',
       LABEL: '',
@@ -201,7 +201,7 @@ export default defineComponent({
     }
 
     const openCreateDialog = () => {
-      dialogTitle.value = '新增对象'
+      dialogTitle.value = 'NEW OBJECT'
       editingId.value = null
       form.value = { NAME: '', LABEL: '', TABLE_NAME: '' }
       dialogVisible.value = true
