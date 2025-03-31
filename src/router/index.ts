@@ -5,6 +5,10 @@ import ImportDataPage from '@/views/ImportDataPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
+    path: '/',
+    redirect: '/ObjectList', // 根路径重定向到 /ObjectList
+  },
+  {
     path: '/ObjectList',
     name: 'ObjectList',
     component: ObjectList
